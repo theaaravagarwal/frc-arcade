@@ -17,6 +17,7 @@ const PANO_HEATMAP_DIR = path.join(__dirname, 'data', 'pano-heatmaps');
 const PANO_HEATMAP_OBJECTS_DIR = path.join(PANO_HEATMAP_DIR, 'objects');
 const createScreensaver = require('./renderer/modules/screensaver');
 const sceneSetup = require('./renderer/modules/scene');
+const flabbyBirdGame = require('./renderer/modules/flabbyBird');
 let gazeModulePromise = null;
 function loadGazeModule() {
   if (!gazeModulePromise) {
@@ -290,6 +291,28 @@ const START_MENU_GUIDES = {
     ],
     note: 'Click the entry or press Enter / controller A / Start to begin searching.',
   },
+  flappyLion: {
+    title: 'Flappy Lion',
+    items: [
+      {
+        label: 'Controls',
+        text: 'Use W for the left board and I for the right board; Enter selects menu items and R restarts a round.',
+      },
+      {
+        label: 'How to play',
+        text: 'Guide one or two birds through the pipe gaps, or let the AI variants play using the imported sprite and sound set.',
+      },
+      {
+        label: 'Settings',
+        text: 'Modes, countdowns, and leaderboards stay inside the game overlay so the Electron shell only launches and exits it.',
+      },
+      {
+        label: 'Inputs',
+        text: 'Keyboard works immediately; the embedded game also keeps its own gamepad polling once active.',
+      },
+    ],
+    note: 'Press Enter, click, or controller A / Start after highlighting Flappy Lion.',
+  },
   gaze: {
     title: 'Gaze Calibration',
     items: [
@@ -357,6 +380,10 @@ const START_MENU_GUIDES = {
     note: 'Use Enter, click, or controller A / Start after highlighting this legacy mode.',
   },
 };
+
+flabbyBirdGame.setExitHandler(() => {
+  showStartMenu();
+});
 
 function getDifficultyPriority(label) {
   const key = (label || '').trim().toLowerCase();
@@ -1470,6 +1497,11 @@ window.addEventListener('keydown', (event) => {
     return;
   }
 
+  if (currentGame === 'flappyLion' && flabbyBirdGame.handleKeyDown(event)) {
+    event.preventDefault();
+    return;
+  }
+
   if (event.key === 'Escape') {
     toggleMenu();
     event.preventDefault();
@@ -1509,6 +1541,10 @@ window.addEventListener('keydown', (event) => {
 
 window.addEventListener('keyup', (event) => {
   if (menuOpen || startMenuVisible) return;
+  if (currentGame === 'flappyLion' && flabbyBirdGame.handleKeyUp(event)) {
+    event.preventDefault();
+    return;
+  }
   keys[event.key.toLowerCase()] = false;
 });
 
@@ -1548,6 +1584,9 @@ function updateAIUI() {
     } else if (currentGame === 'pano') {
       aiIndicator.textContent = '';
       aiIndicator.classList.add('active');
+    } else if (currentGame === 'flappyLion') {
+      aiIndicator.textContent = '';
+      aiIndicator.classList.remove('active');
     } else {
       aiIndicator.textContent = aiEnabled
         ? `P2 MODE — AI BOT (${difficulty.label})`
@@ -2082,6 +2121,9 @@ function updateControlHints(mode) {
   } else if (mode === 'pano') {
     controlBlocks[0].innerHTML = `<span>Panorama Hunt</span>Drag or P1 left stick to pan · Scroll or P1 right stick (up/down) to zoom`;
     controlBlocks[1].innerHTML = `<span>Tips</span>Click or P1 A checks center point · ESC for menu`;
+  } else if (mode === 'flappyLion') {
+    controlBlocks[0].innerHTML = `<span>Flappy Lion</span>W flaps the left board · I flaps the right board · Enter selects`;
+    controlBlocks[1].innerHTML = `<span>Tips</span>R restarts after a crash · ESC exits back to the arcade menu`;
   } else {
     controlBlocks[0].innerHTML = `<span>P1 (Neon Cyan)</span>Move: W A S D · Rotate: Q / E`;
     controlBlocks[1].innerHTML = `<span>P2 (Neon Magenta)</span>Move: I J K L · Rotate: U / O`;
@@ -3838,6 +3880,7 @@ function showStartMenu() {
   cleanupGazePaddle();
   cleanupLaneRunner();
   cleanupPanoGame();
+  flabbyBirdGame.deactivate();
   currentGame = null;
   updatePanoDevVisibility(null);
   updatePanoResetButtonVisibility();
@@ -3880,6 +3923,9 @@ function selectGame(gameKey) {
     return;
   }
   hideStartMenu();
+  if (currentGame === 'flappyLion' && gameKey !== 'flappyLion') {
+    flabbyBirdGame.deactivate();
+  }
   currentGame = gameKey;
   updatePanoDevVisibility(gameKey);
   updatePanoResetButtonVisibility();
@@ -3895,6 +3941,9 @@ function selectGame(gameKey) {
   }
   if (gameKey !== 'pano') {
     cleanupPanoGame();
+  }
+  if (gameKey !== 'flappyLion') {
+    flabbyBirdGame.deactivate();
   }
   updateRobotVisibility();
   applyVisualMode(gameKey);
@@ -3915,6 +3964,9 @@ function selectGame(gameKey) {
     initLaneRunnerGame();
   } else if (gameKey === 'pano') {
     initPanoGame();
+  } else if (gameKey === 'flappyLion') {
+    setScoreboardText('FLAPPY LION', 'W / I TO FLAP', 'ESC TO EXIT');
+    flabbyBirdGame.activate();
   }
 }
 
