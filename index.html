@@ -142,6 +142,79 @@
         opacity: 0.7;
       }
 
+      .music-now-playing {
+        position: fixed;
+        left: 50%;
+        bottom: 10px;
+        transform: translateX(-50%);
+        z-index: 120;
+        pointer-events: none;
+        max-width: min(78vw, 760px);
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(83, 255, 210, 0.35);
+        background: rgba(4, 7, 20, 0.72);
+        text-align: center;
+        font-size: 0.68rem;
+        letter-spacing: 0.05em;
+        line-height: 1.2;
+        color: rgba(248, 247, 255, 0.92);
+        margin-top: 6px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      #musicPanel {
+        position: absolute;
+        right: 14px;
+        top: 14px;
+        width: min(340px, 92vw);
+        background: rgba(6, 9, 24, 0.96);
+        border: 1px solid rgba(83, 255, 210, 0.55);
+        border-radius: 12px;
+        padding: 12px;
+        z-index: 60;
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+      }
+
+      #musicPanel h3 {
+        margin: 0 0 8px;
+        letter-spacing: 0.18em;
+        font-size: 0.85rem;
+      }
+
+      #musicPanelNowPlaying {
+        font-size: 0.72rem;
+        opacity: 0.85;
+        margin-bottom: 10px;
+        line-height: 1.35;
+      }
+
+      .music-controls {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .music-controls button {
+        padding: 8px 10px;
+        border-radius: 8px;
+        border: 1px solid rgba(83, 255, 210, 0.5);
+        background: rgba(83, 255, 210, 0.1);
+        color: #f8f7ff;
+        cursor: pointer;
+        letter-spacing: 0.08em;
+        font-size: 0.72rem;
+      }
+
+      .music-controls button.menu-focus,
+      .music-controls button:focus {
+        outline: none;
+        background: rgba(83, 255, 210, 0.24);
+        transform: translateY(-1px);
+      }
+
       #menuOverlay {
         position: absolute;
         inset: 0;
@@ -934,7 +1007,7 @@
     <div id="startMenu">
       <div class="start-panel">
         <h1>SELECT GAME</h1>
-        <p>Fast start: A / Start / Enter • Help: Y / H</p>
+        <p>Fast start: A / Start / Enter</p>
         <div class="start-panel-grid">
           <div class="start-panel-buttons">
             <button data-game="joust">Robot Joust</button>
@@ -967,7 +1040,7 @@
                 </li>
               </ul>
               <div class="guide-note" id="startMenuGuideNote">
-                Compact help is on by default. Press Y (controller) or H (keyboard) to expand.
+                Full controls and game goals are always shown for quick onboarding.
               </div>
             </div>
           </div>
@@ -1026,7 +1099,21 @@
         <div id="gazeStatus" class="gaze-status">GAZE MODE — IDLE</div>
         <div id="gazeCoords" class="gaze-readout">x: ---, y: ---</div>
       </div>
-      <div class="menu-hint">Press ESC to open menu</div>
+      <div id="musicNowPlaying" class="music-now-playing">Now Playing: No music loaded</div>
+    </div>
+    <div id="musicPanel" class="hidden">
+      <h3>MUSIC</h3>
+      <div id="musicPanelNowPlaying">Now Playing: No music loaded</div>
+      <div class="music-controls">
+        <button id="musicPanelPlayPause" data-music-control>PLAY</button>
+        <button id="musicPanelMute" data-music-control>MUTE: OFF</button>
+        <button id="musicPanelPrev" data-music-control>PREVIOUS</button>
+        <button id="musicPanelNext" data-music-control>NEXT</button>
+        <button id="musicPanelShuffle" data-music-control>SHUFFLE: ON</button>
+        <button id="musicPanelVolDown" data-music-control>VOL -</button>
+        <button id="musicPanelVolUp" data-music-control>VOL +</button>
+        <button id="musicPanelHide" data-music-control>HIDE</button>
+      </div>
     </div>
     <div id="menuOverlay">
       <div class="menu-panel">

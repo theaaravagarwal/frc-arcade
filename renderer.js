@@ -18,6 +18,7 @@ const PANO_HEATMAP_OBJECTS_DIR = path.join(PANO_HEATMAP_DIR, 'objects');
 const createScreensaver = require('./renderer/modules/screensaver');
 const sceneSetup = require('./renderer/modules/scene');
 const flabbyBirdGame = require('./renderer/modules/flabbyBird');
+const createMusicManager = require('./renderer/modules/musicManager');
 let gazeModulePromise = null;
 function loadGazeModule() {
   if (!gazeModulePromise) {
@@ -125,6 +126,17 @@ const {
   panoCrosshair,
   panoResetButton,
   panoRechooseButton,
+  musicNowPlaying,
+  musicPanel,
+  musicPanelNowPlaying,
+  musicPanelPlayPause,
+  musicPanelMute,
+  musicPanelPrev,
+  musicPanelNext,
+  musicPanelShuffle,
+  musicPanelVolDown,
+  musicPanelVolUp,
+  musicPanelHide,
 } = dom;
 
 const panoDevOverlayCtx = panoDevOverlayCanvas ? panoDevOverlayCanvas.getContext('2d') : null;
@@ -136,6 +148,70 @@ let postSSAOPass = null;
 let postBloomPass = null;
 let postSMAPass = null;
 let currentGame = null;
+const MUSIC_ROOT_DIR = path.join(__dirname, 'assets', 'music');
+const MUSIC_PANEL_VOLUME_STEP = 0.05;
+let musicPanelVisible = false;
+let musicPanelIndex = 0;
+
+function getMusicPanelButtons() {
+  return [
+    musicPanelPlayPause,
+    musicPanelMute,
+    musicPanelPrev,
+    musicPanelNext,
+    musicPanelShuffle,
+    musicPanelVolDown,
+    musicPanelVolUp,
+    musicPanelHide,
+  ].filter(Boolean);
+}
+
+function formatNowPlaying(track) {
+  if (!track) return 'Now Playing: No music loaded';
+  const album = track.album || 'Unknown Album';
+  const song = track.song || 'Unknown Song';
+  return `Now Playing: ${album} — ${song}`;
+}
+
+function updateMusicNowPlaying(track) {
+  const text = formatNowPlaying(track);
+  if (musicNowPlaying) {
+    musicNowPlaying.textContent = text;
+  }
+  if (musicPanelNowPlaying) {
+    musicPanelNowPlaying.textContent = text;
+  }
+}
+
+function updateMusicPanelControls() {
+  const state = musicManager.getState();
+  if (musicPanelPlayPause) {
+    musicPanelPlayPause.textContent = state.paused ? 'PLAY' : 'PAUSE';
+  }
+  if (musicPanelMute) {
+    musicPanelMute.textContent = `MUTE: ${state.muted ? 'ON' : 'OFF'}`;
+  }
+  if (musicPanelShuffle) {
+    musicPanelShuffle.textContent = `SHUFFLE: ${state.shuffle ? 'ON' : 'OFF'}`;
+  }
+  if (musicPanelVolDown) {
+    musicPanelVolDown.textContent = `VOL - (${Math.round(state.volume * 100)}%)`;
+  }
+  if (musicPanelVolUp) {
+    musicPanelVolUp.textContent = `VOL + (${Math.round(state.volume * 100)}%)`;
+  }
+}
+
+const musicManager = createMusicManager({
+  musicRootDir: MUSIC_ROOT_DIR,
+  onTrackChange: (track) => {
+    updateMusicNowPlaying(track);
+    updateMusicPanelControls();
+  },
+  onStateChange: () => {
+    updateMusicPanelControls();
+  },
+});
 
 function ledSetMode(mode) {
   if (!ipcRenderer) return;
@@ -231,59 +307,78 @@ const START_MENU_GUIDES = {
     ],
     expandedItems: [{ label: 'Best for', text: 'Kiosk flow with quick repeat play.' }],
     compactNote: 'Fast path stays visible for returning users.',
-    expandedNote: 'Press Y (controller) or H (keyboard) to return to compact help.',
+    expandedNote: 'Detailed help is always visible on this screen.',
   },
   joust: {
     title: 'Robot Joust',
     compactItems: [
-      { label: 'Controls', text: 'Move: left stick / WASD. Rotate: LB-RB / Q-E.' },
-      { label: 'Goal', text: 'Bump the opponent to score and win rounds.' },
+      {
+        label: 'Controls',
+        text: 'P1: WASD + Q/E or controller 1. P2: IJKL + U/O or controller 2.',
+      },
+      { label: 'Goal', text: 'Hit the other robot bumper to score first to the win target.' },
     ],
-    expandedItems: [{ label: 'Best for', text: 'Two players and fast matches.' }],
+    expandedItems: [
+      { label: 'How to win', text: 'Each bumper hit scores and instantly resets positions for the next round.' },
+      { label: 'Best for', text: 'Two-player head-to-head sessions with fast restarts.' },
+      { label: 'Tip', text: 'Use rotation to angle your bumper and deny direct approaches.' },
+    ],
     compactNote: 'A / Start / Enter launches immediately.',
     expandedNote: 'ESC opens settings for AI pilot and difficulty.',
   },
   shooter: {
     title: 'Driver + Gunner Shooter',
     compactItems: [
-      { label: 'Controls', text: 'Driver moves/rotates. Gunner aims and fires.' },
-      { label: 'Goal', text: 'Survive waves and increase score.' },
+      {
+        label: 'Controls',
+        text: 'Driver moves base (WASD + Q/E or controller 1). Gunner aims/fires (I/J/L or controller 2).',
+      },
+      { label: 'Goal', text: 'Destroy incoming enemies before they collide with your base.' },
     ],
-    expandedItems: [{ label: 'Best for', text: 'Team coordination with two players.' }],
+    expandedItems: [
+      { label: 'How to score', text: 'Each enemy eliminated increases score; waves get denser over time.' },
+      { label: 'Best for', text: 'Co-op play where one player drives and one player shoots.' },
+      { label: 'Tip', text: 'Driver should orbit threats while gunner tracks the closest cluster.' },
+    ],
     compactNote: 'A / Start / Enter launches immediately.',
     expandedNote: 'ESC settings can assign AI to driver or turret.',
   },
   pano: {
     title: 'Find the Object Panorama',
     compactItems: [
-      { label: 'Controls', text: 'Pan with stick/mouse. Zoom with right stick/scroll. A/click checks.' },
-      { label: 'Goal', text: 'Find the target object quickly.' },
+      {
+        label: 'Controls',
+        text: 'Pan with mouse drag/left stick, zoom with scroll/right stick, confirm with click/A.',
+      },
+      { label: 'Goal', text: 'Locate the selected object in the panorama as quickly as possible.' },
     ],
-    expandedItems: [{ label: 'Best for', text: 'Solo scanning challenge.' }],
+    expandedItems: [
+      { label: 'How to play', text: 'Choose a target, scan methodically, and mark the spot when confident.' },
+      { label: 'Best for', text: 'Solo puzzle/observation play with quick turn-taking.' },
+      { label: 'Tip', text: 'Zoom out to orient, then zoom in to verify fine details.' },
+    ],
     compactNote: 'A / Start / Enter opens object selection.',
     expandedNote: 'Use Reset Search during play when needed.',
   },
   flappyLion: {
     title: 'Flappy Lion',
-    items: [
+    compactItems: [
       {
         label: 'Controls',
-        text: 'Use W for the left board and I for the right board; Enter selects menu items and R restarts a round.',
+        text: 'Flap with W (left lane) and I (right lane). Enter confirms menus; R restarts.',
       },
       {
-        label: 'How to play',
-        text: 'Guide one or two birds through the pipe gaps, or let the AI variants play using the imported sprite and sound set.',
-      },
-      {
-        label: 'Settings',
-        text: 'Modes, countdowns, and leaderboards stay inside the game overlay so the Electron shell only launches and exits it.',
-      },
-      {
-        label: 'Inputs',
-        text: 'Keyboard works immediately; the embedded game also keeps its own gamepad polling once active.',
+        label: 'Goal',
+        text: 'Thread birds through pipe gaps and stay alive as long as possible.',
       },
     ],
-    note: 'Press Enter, click, or controller A / Start after highlighting Flappy Lion.',
+    expandedItems: [
+      { label: 'How to play', text: 'Supports solo, co-op lanes, and AI variants directly in the game overlay.' },
+      { label: 'Best for', text: 'Short, repeatable kiosk rounds with immediate restart.' },
+      { label: 'Tip', text: 'Use rhythmic taps instead of holds to keep smoother height control.' },
+    ],
+    compactNote: 'A / Start / Enter launches immediately.',
+    expandedNote: 'Use in-game mode select for solo/co-op/AI variants.',
   },
   gaze: {
     title: 'Gaze Calibration',
@@ -333,7 +428,7 @@ function updateStartMenuGuide(button = startMenuButtons[startMenuIndex]) {
   const guide = START_MENU_GUIDES[guideKey] || START_MENU_GUIDES.default;
   const compactItems = Array.isArray(guide.compactItems) ? guide.compactItems : [];
   const expandedItems = Array.isArray(guide.expandedItems) ? guide.expandedItems : [];
-  const items = startMenuGuideExpanded ? compactItems.concat(expandedItems) : compactItems;
+  const items = compactItems.concat(expandedItems);
   startMenuGuideTitle.textContent = guide.title;
   startMenuGuideList.innerHTML = '';
   items.forEach((item) => {
@@ -341,15 +436,159 @@ function updateStartMenuGuide(button = startMenuButtons[startMenuIndex]) {
     li.innerHTML = `<span class="guide-label">${item.label}</span> ${item.text}`;
     startMenuGuideList.appendChild(li);
   });
-  startMenuGuideNote.textContent = startMenuGuideExpanded
-    ? guide.expandedNote || ''
-    : guide.compactNote || '';
+  startMenuGuideNote.textContent = guide.expandedNote || guide.compactNote || '';
 }
 
-function toggleStartMenuGuideExpanded() {
-  startMenuGuideExpanded = !startMenuGuideExpanded;
-  updateStartMenuGuide();
+function applyMusicPanelFocus() {
+  const buttons = getMusicPanelButtons();
+  if (!buttons.length) return;
+  const length = buttons.length;
+  musicPanelIndex = ((musicPanelIndex % length) + length) % length;
+  buttons.forEach((button) => button.classList.remove('menu-focus'));
+  const focused = buttons[musicPanelIndex];
+  if (focused) {
+    focused.classList.add('menu-focus');
+    focused.focus();
+  }
 }
+
+function setMusicPanelVisible(visible) {
+  if (!musicPanel) return;
+  musicPanelVisible = !!visible;
+  musicPanel.classList.toggle('hidden', !musicPanelVisible);
+  if (musicPanelVisible) {
+    applyMusicPanelFocus();
+  } else {
+    getMusicPanelButtons().forEach((button) => button.classList.remove('menu-focus'));
+  }
+}
+
+function toggleMusicPanel() {
+  setMusicPanelVisible(!musicPanelVisible);
+}
+
+function runMusicPanelAction(action) {
+  if (!action) return;
+  musicManager.primePlayback();
+  if (action === 'play-pause') {
+    musicManager.togglePlayPause();
+  } else if (action === 'mute') {
+    musicManager.toggleMuted();
+  } else if (action === 'prev') {
+    musicManager.previousTrack(true);
+  } else if (action === 'next') {
+    musicManager.nextTrack(true);
+  } else if (action === 'shuffle') {
+    musicManager.toggleShuffle();
+  } else if (action === 'vol-down') {
+    musicManager.adjustVolume(-MUSIC_PANEL_VOLUME_STEP);
+  } else if (action === 'vol-up') {
+    musicManager.adjustVolume(MUSIC_PANEL_VOLUME_STEP);
+  } else if (action === 'hide') {
+    setMusicPanelVisible(false);
+  }
+}
+
+function handleMusicPanelKeydown(event) {
+  if (!musicPanelVisible) return false;
+  const key = event.key.toLowerCase();
+  if (key === 'escape') {
+    setMusicPanelVisible(false);
+    return true;
+  }
+  if (key === 'arrowup' || key === 'w') {
+    musicPanelIndex -= 1;
+    applyMusicPanelFocus();
+    return true;
+  }
+  if (key === 'arrowdown' || key === 's') {
+    musicPanelIndex += 1;
+    applyMusicPanelFocus();
+    return true;
+  }
+  if (key === 'arrowleft' || key === '[') {
+    runMusicPanelAction('vol-down');
+    return true;
+  }
+  if (key === 'arrowright' || key === ']') {
+    runMusicPanelAction('vol-up');
+    return true;
+  }
+  if (key === 'enter' || key === ' ') {
+    const focused = getMusicPanelButtons()[musicPanelIndex];
+    if (focused && focused.dataset && focused.dataset.action) {
+      runMusicPanelAction(focused.dataset.action);
+      return true;
+    }
+  }
+  return false;
+}
+
+function bindMusicPanelEvents() {
+  if (musicPanelPlayPause) musicPanelPlayPause.dataset.action = 'play-pause';
+  if (musicPanelMute) musicPanelMute.dataset.action = 'mute';
+  if (musicPanelPrev) musicPanelPrev.dataset.action = 'prev';
+  if (musicPanelNext) musicPanelNext.dataset.action = 'next';
+  if (musicPanelShuffle) musicPanelShuffle.dataset.action = 'shuffle';
+  if (musicPanelVolDown) musicPanelVolDown.dataset.action = 'vol-down';
+  if (musicPanelVolUp) musicPanelVolUp.dataset.action = 'vol-up';
+  if (musicPanelHide) musicPanelHide.dataset.action = 'hide';
+
+  getMusicPanelButtons().forEach((button, index) => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      musicPanelIndex = index;
+      applyMusicPanelFocus();
+      runMusicPanelAction(button.dataset.action);
+    });
+  });
+}
+
+function handleGlobalMusicShortcuts(event) {
+  const key = event.key.toLowerCase();
+  if (key === 'p') {
+    toggleMusicPanel();
+    return true;
+  }
+  if (key === 'm') {
+    musicManager.primePlayback();
+    musicManager.toggleMuted();
+    return true;
+  }
+  if (key === '[') {
+    musicManager.primePlayback();
+    musicManager.adjustVolume(-MUSIC_PANEL_VOLUME_STEP);
+    return true;
+  }
+  if (key === ']') {
+    musicManager.primePlayback();
+    musicManager.adjustVolume(MUSIC_PANEL_VOLUME_STEP);
+    return true;
+  }
+  if (key === ',') {
+    musicManager.primePlayback();
+    musicManager.previousTrack(true);
+    return true;
+  }
+  if (key === '.') {
+    musicManager.primePlayback();
+    musicManager.nextTrack(true);
+    return true;
+  }
+  return false;
+}
+
+musicManager.initialize();
+bindMusicPanelEvents();
+updateMusicNowPlaying(musicManager.getCurrentTrack());
+updateMusicPanelControls();
+setMusicPanelVisible(false);
+musicManager.play();
+['pointerdown', 'touchstart', 'keydown'].forEach((eventName) => {
+  window.addEventListener(eventName, () => {
+    musicManager.primePlayback();
+  });
+});
 
 if (!isDebugMode) {
   if (loadGazeCalibrationButton) {
@@ -508,7 +747,6 @@ let menuIndex = 0;
 let menuMode = 'main';
 let startMenuIndex = 0;
 let startMenuVisible = true;
-let startMenuGuideExpanded = false;
 const colorHelper = new THREE.Color();
 const aiDiff = new THREE.Vector2();
 const aiMoveTarget = new THREE.Vector2();
@@ -1180,9 +1418,6 @@ function handleStartMenuGamepadInput(padIndex) {
   } else if (state.navEvents.down) {
     moveStartMenuSelection(1);
   }
-  if (wasGamepadButtonPressed(padIndex, GAMEPAD_BUTTONS.Y)) {
-    toggleStartMenuGuideExpanded();
-  }
   if (
     wasGamepadButtonPressed(padIndex, GAMEPAD_BUTTONS.A) ||
     wasGamepadButtonPressed(padIndex, GAMEPAD_BUTTONS.START)
@@ -1209,11 +1444,52 @@ function handlePauseMenuGamepadInput(padIndex) {
   }
 }
 
+function handleMusicPanelGamepadInput(padIndex) {
+  const state = getGamepadState(padIndex);
+  if (!state || !state.connected || !musicPanelVisible) return;
+  if (state.navEvents.up) {
+    musicPanelIndex -= 1;
+    applyMusicPanelFocus();
+  }
+  if (state.navEvents.down) {
+    musicPanelIndex += 1;
+    applyMusicPanelFocus();
+  }
+  if (state.navEvents.left) {
+    runMusicPanelAction('vol-down');
+  }
+  if (state.navEvents.right) {
+    runMusicPanelAction('vol-up');
+  }
+  if (wasGamepadButtonPressed(padIndex, GAMEPAD_BUTTONS.A)) {
+    const focused = getMusicPanelButtons()[musicPanelIndex];
+    if (focused && focused.dataset && focused.dataset.action) {
+      runMusicPanelAction(focused.dataset.action);
+    }
+  }
+  if (
+    wasGamepadButtonPressed(padIndex, GAMEPAD_BUTTONS.B) ||
+    wasGamepadButtonPressed(padIndex, GAMEPAD_BUTTONS.BACK)
+  ) {
+    setMusicPanelVisible(false);
+  }
+}
+
 function handleGamepadMenus() {
+  let musicToggleHandled = false;
   let menuToggleHandled = false;
   for (let i = 0; i < gamepadStates.length; i += 1) {
     const state = gamepadStates[i];
     if (!state || !state.connected) continue;
+    if (!musicToggleHandled && wasGamepadButtonPressed(i, GAMEPAD_BUTTONS.BACK)) {
+      toggleMusicPanel();
+      musicToggleHandled = true;
+      continue;
+    }
+    if (musicPanelVisible) {
+      handleMusicPanelGamepadInput(i);
+      continue;
+    }
     if (startMenuVisible) {
       handleStartMenuGamepadInput(i);
       continue;
@@ -1440,6 +1716,26 @@ if (isDebugMode && loadGazeCalibrationButton) {
 }
 
 window.addEventListener('keydown', (event) => {
+  const activeElement = document.activeElement;
+  if (
+    activeElement &&
+    (activeElement.tagName === 'INPUT' ||
+      activeElement.tagName === 'TEXTAREA' ||
+      activeElement.isContentEditable)
+  ) {
+    return;
+  }
+
+  if (handleGlobalMusicShortcuts(event)) {
+    event.preventDefault();
+    return;
+  }
+
+  if (handleMusicPanelKeydown(event)) {
+    event.preventDefault();
+    return;
+  }
+
   if (startMenuVisible) {
     if (handleStartMenuKeydown(event)) {
       return;
@@ -1462,16 +1758,6 @@ window.addEventListener('keydown', (event) => {
     if (handleMenuNavigation(event)) {
       event.preventDefault();
     }
-    return;
-  }
-
-  const activeElement = document.activeElement;
-  if (
-    activeElement &&
-    (activeElement.tagName === 'INPUT' ||
-      activeElement.tagName === 'TEXTAREA' ||
-      activeElement.isContentEditable)
-  ) {
     return;
   }
 
@@ -2073,7 +2359,7 @@ function updateControlHints(mode) {
     controlBlocks[1].innerHTML = `<span>Tips</span>Click or P1 A checks center point · ESC for menu`;
   } else if (mode === 'flappyLion') {
     controlBlocks[0].innerHTML = `<span>Flappy Lion</span>W flaps the left board · I flaps the right board · Enter selects`;
-    controlBlocks[1].innerHTML = `<span>Tips</span>R restarts after a crash · ESC exits back to the arcade menu`;
+    controlBlocks[1].innerHTML = `<span>Tips</span>R restarts after a crash · ESC / B exits back to the arcade menu`;
   } else {
     controlBlocks[0].innerHTML = `<span>P1 (Neon Cyan)</span>Move: W A S D · Rotate: Q / E`;
     controlBlocks[1].innerHTML = `<span>P2 (Neon Magenta)</span>Move: I J K L · Rotate: U / O`;
@@ -2082,11 +2368,6 @@ function updateControlHints(mode) {
 
 function handleStartMenuKeydown(event) {
   const key = event.key.toLowerCase();
-  if (key === 'h' || key === 'y') {
-    toggleStartMenuGuideExpanded();
-    event.preventDefault();
-    return true;
-  }
   if (key === 'arrowup' || key === 'w') {
     moveStartMenuSelection(-1);
     event.preventDefault();
@@ -3847,7 +4128,6 @@ function showStartMenu() {
   startMenuVisible = true;
   startMenu.classList.remove('hidden');
   startMenuIndex = 0;
-  startMenuGuideExpanded = false;
   highlightStartButton();
   setScoreboardText('CHOOSE GAME', 'SELECT A MODE', '');
   showCenterMessage('CHOOSE GAME', 0);
@@ -3921,7 +4201,7 @@ function selectGame(gameKey) {
   } else if (gameKey === 'pano') {
     initPanoGame();
   } else if (gameKey === 'flappyLion') {
-    setScoreboardText('FLAPPY LION', 'W / I TO FLAP', 'ESC TO EXIT');
+    setScoreboardText('FLAPPY LION', 'W / I TO FLAP', 'ESC / B TO EXIT');
     flabbyBirdGame.activate();
   }
 }

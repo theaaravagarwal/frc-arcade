@@ -349,7 +349,7 @@ function ensureFlappyLionDom() {
                     <div id="controls-info">
                         <div class="control-row"><span class="key">W</span> Left lion flap <span class="key">I</span> Right lion flap</div>
                         <div class="control-row"><span class="key">A / RT</span> Controller flap <span class="key">Start</span> Pause</div>
-                        <div class="control-row"><span class="key">Enter</span> Select <span class="key">Esc</span> Return to arcade</div>
+                        <div class="control-row"><span class="key">Enter</span> Select <span class="key">Esc / B</span> Return to arcade</div>
                     </div>
                     <div class="flappy-lion-actions spaced">
                         <button id="flabbyExitButton" class="flappy-lion-exit">Exit to Arcade</button>
@@ -387,11 +387,9 @@ function ensureFlappyLionDom() {
                 </div>
                 <div id="game-container">
                     <div class="flappy-lion-board-wrap">
-                        <div class="flappy-lion-board-label">LEFT BOARD</div>
                         <canvas id="board1"></canvas>
                     </div>
                     <div class="flappy-lion-board-wrap">
-                        <div class="flappy-lion-board-label">RIGHT BOARD</div>
                         <canvas id="board2"></canvas>
                     </div>
                 </div>
@@ -520,7 +518,14 @@ const AXIS_DEADZONE = 0.45;
 
 // Controller navigation
 let currentMenuIndex = 0;
-let menuButtons = ['single-player-btn', 'two-player-btn', 'ai-vs-ai-btn', 'player-vs-ai-btn', 'leaderboard-btn'];
+let menuButtons = [
+    'single-player-btn',
+    'two-player-btn',
+    'ai-vs-ai-btn',
+    'player-vs-ai-btn',
+    'leaderboard-btn',
+    'flabbyExitButton',
+];
 let leaderboardButtons = ['back-to-menu-btn'];
 let currentLeaderboardIndex = 0;
 
@@ -540,6 +545,23 @@ function syncConnectedGamepads() {
     gamepad2Connected = pads.length > 1;
     gamepadIndex = gamepadConnected ? pads[0].index : -1;
     gamepad2Index = gamepad2Connected ? pads[1].index : -1;
+}
+
+function primeGamepadFrameStates() {
+    Object.keys(gamepadFrameStates).forEach((key) => {
+        delete gamepadFrameStates[key];
+    });
+
+    const pads = Array.from(navigator.getGamepads?.() || []).filter(Boolean);
+    pads.forEach((pad) => {
+        const state = getGamepadFrameState(pad.index);
+        state.axisY = typeof pad.axes?.[1] === 'number' ? pad.axes[1] : 0;
+        if (Array.isArray(pad.buttons)) {
+            pad.buttons.forEach((button, buttonIndex) => {
+                state.buttons[buttonIndex] = !!(button && (button.pressed || button.value > 0.5));
+            });
+        }
+    });
 }
 
 function isGamepadButtonPressed(gamepad, buttonIndex) {
@@ -1742,6 +1764,9 @@ function selectMenuOption() {
         case 'leaderboard-btn':
             showLeaderboard();
             break;
+        case 'flabbyExitButton':
+            exitToArcade();
+            break;
     }
 }
 
@@ -1790,6 +1815,8 @@ function handleGameRestart() {
 function returnToMenu() {
     gameState = 'TITLE';
     isPaused = false;
+    currentMenuIndex = 0;
+    currentLeaderboardIndex = 0;
 
     // Clear intervals
     if (game1.pipeInterval) {
@@ -1825,6 +1852,9 @@ function returnToMenu() {
     // Reset games
     resetGame(game1);
     resetGame(game2);
+    primeGamepadFrameStates();
+    updateMenuHighlight();
+    updateLeaderboardHighlight();
 }
 
 function detectCollision(a, b) {
@@ -2533,6 +2563,7 @@ function activate() {
     isActive = true;
     showFlabbyRoot();
     returnToMenu();
+    primeGamepadFrameStates();
     setupResponsiveCanvas();
     updateMenuHighlight();
 }

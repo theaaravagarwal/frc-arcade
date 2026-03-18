@@ -65,6 +65,17 @@ const panoHeatmapModeButton = document.getElementById('panoHeatmapModeButton');
 const panoHeatmapObjectSelect = document.getElementById('panoHeatmapObjectSelect');
 const panoCrosshair = document.getElementById('panoCrosshair');
 const panoResetButton = document.getElementById('panoResetButton');
+const musicNowPlaying = document.getElementById('musicNowPlaying');
+const musicPanel = document.getElementById('musicPanel');
+const musicPanelNowPlaying = document.getElementById('musicPanelNowPlaying');
+const musicPanelPlayPause = document.getElementById('musicPanelPlayPause');
+const musicPanelMute = document.getElementById('musicPanelMute');
+const musicPanelPrev = document.getElementById('musicPanelPrev');
+const musicPanelNext = document.getElementById('musicPanelNext');
+const musicPanelShuffle = document.getElementById('musicPanelShuffle');
+const musicPanelVolDown = document.getElementById('musicPanelVolDown');
+const musicPanelVolUp = document.getElementById('musicPanelVolUp');
+const musicPanelHide = document.getElementById('musicPanelHide');
 
 module.exports = {
   appContainer,
@@ -132,6 +143,17 @@ module.exports = {
   panoHeatmapObjectSelect,
   panoCrosshair,
   panoResetButton,
+  musicNowPlaying,
+  musicPanel,
+  musicPanelNowPlaying,
+  musicPanelPlayPause,
+  musicPanelMute,
+  musicPanelPrev,
+  musicPanelNext,
+  musicPanelShuffle,
+  musicPanelVolDown,
+  musicPanelVolUp,
+  musicPanelHide,
   panoDevOverlay,
   panoDevOverlayCanvas,
 };
