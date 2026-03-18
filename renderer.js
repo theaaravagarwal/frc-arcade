@@ -219,77 +219,49 @@ let isLightSwitchBright = false;
 const START_MENU_GUIDES = {
   default: {
     title: 'FRC ARCADE',
-    items: [
-      { label: 'Selection', text: 'Use ↑/↓ or the left stick to highlight a mode.' },
-      { label: 'Continue', text: 'Click or press Enter / controller A / Start once you choose.' },
+    compactItems: [
+      {
+        label: 'Controls',
+        text: 'D-pad / left stick to browse. A / Start / Enter launches.',
+      },
+      {
+        label: 'Goal',
+        text: 'Pick a game and start immediately.',
+      },
     ],
-    note: 'Guides update per mode when highlighted.',
+    expandedItems: [{ label: 'Best for', text: 'Kiosk flow with quick repeat play.' }],
+    compactNote: 'Fast path stays visible for returning users.',
+    expandedNote: 'Press Y (controller) or H (keyboard) to return to compact help.',
   },
   joust: {
     title: 'Robot Joust',
-    items: [
-      {
-        label: 'Controls',
-        text: 'P1 uses W/A/S/D plus Q/E, P2 uses I/J/K/L plus U/O, or plug in gamepads to use analog sticks and LB/RB (or the right stick) for turning.',
-      },
-      {
-        label: 'How to play',
-        text: "Smack the opponent's bumper to score; each hit starts a new round until someone reaches the win score.",
-      },
-      {
-        label: 'Settings',
-        text: 'ESC → Settings toggles AI pilots and difficulty for either slot without leaving the arena.',
-      },
-      {
-        label: 'Inputs',
-        text: 'Best with keyboards or paired controllers; trackpads are awkward for dual inputs.',
-      },
+    compactItems: [
+      { label: 'Controls', text: 'Move: left stick / WASD. Rotate: LB-RB / Q-E.' },
+      { label: 'Goal', text: 'Bump the opponent to score and win rounds.' },
     ],
-    note: 'Press Enter, click, or controller A / Start to jump in.',
+    expandedItems: [{ label: 'Best for', text: 'Two players and fast matches.' }],
+    compactNote: 'A / Start / Enter launches immediately.',
+    expandedNote: 'ESC opens settings for AI pilot and difficulty.',
   },
   shooter: {
     title: 'Driver + Gunner Shooter',
-    items: [
-      {
-        label: 'Controls',
-        text: 'Driver reuses P1 keys while the gunner turns the turret with J/L and fires with I; two controllers let each role use sticks plus LB/RB or triggers.',
-      },
-      {
-        label: 'How to play',
-        text: 'Dodge incoming spheres and shoot them before they hit your base; waves grow harder as your score increases.',
-      },
-      {
-        label: 'Settings',
-        text: 'ESC opens settings to hand either seat over to AI or adjust AI difficulty mid-run.',
-      },
-      {
-        label: 'Inputs',
-        text: 'Keyboard + second key set works, but matched gamepads make dual control much easier; trackpads are unnecessary.',
-      },
+    compactItems: [
+      { label: 'Controls', text: 'Driver moves/rotates. Gunner aims and fires.' },
+      { label: 'Goal', text: 'Survive waves and increase score.' },
     ],
-    note: 'Hit Enter, click, or controller A / Start to begin the shooter.',
+    expandedItems: [{ label: 'Best for', text: 'Team coordination with two players.' }],
+    compactNote: 'A / Start / Enter launches immediately.',
+    expandedNote: 'ESC settings can assign AI to driver or turret.',
   },
   pano: {
     title: 'Find the Object Panorama',
-    items: [
-      {
-        label: 'Controls',
-        text: 'Click-and-drag or use P1 left stick to pan, scroll or P1 right stick up/down to zoom, and click or press A to mark the suspected object; the light switch inside the scene brightens the view.',
-      },
-      {
-        label: 'How to play',
-        text: 'Choose an object, scan the panorama, then click the matching spot to mark it before resetting or rechoosing.',
-      },
-      {
-        label: 'Settings',
-        text: 'ESC only adjusts global settings—use the on-screen reset and the light switch for fine control.',
-      },
-      {
-        label: 'Inputs',
-        text: 'Mouse/trackpad is most precise, but P1 controller works too: left stick pans, right stick up/down zooms, and A checks the center reticle.',
-      },
+    compactItems: [
+      { label: 'Controls', text: 'Pan with stick/mouse. Zoom with right stick/scroll. A/click checks.' },
+      { label: 'Goal', text: 'Find the target object quickly.' },
     ],
-    note: 'Click the entry or press Enter / controller A / Start to begin searching.',
+    expandedItems: [{ label: 'Best for', text: 'Solo scanning challenge.' }],
+    compactNote: 'A / Start / Enter opens object selection.',
+    expandedNote: 'Use Reset Search during play when needed.',
   },
   flappyLion: {
     title: 'Flappy Lion',
@@ -315,69 +287,33 @@ const START_MENU_GUIDES = {
   },
   gaze: {
     title: 'Gaze Calibration',
-    items: [
-      {
-        label: 'Controls',
-        text: 'Look at each dot and press Space or controller A when it steadies; press R during tracking to recalibrate.',
-      },
-      {
-        label: 'How to play',
-        text: 'Grant webcam access, follow each calibration dot, and wait for tracking readiness before launching other gaze modes.',
-      },
-      {
-        label: 'Settings',
-        text: 'Use Load Saved Calibration for testing while ESC keeps AI toggles independent.',
-      },
-      {
-        label: 'Inputs',
-        text: 'Webcam plus keyboard/trackpad or controller A confirms to the dots; eye movement controls the rest.',
-      },
+    compactItems: [
+      { label: 'Controls', text: 'Look at dots and confirm with Space / A.' },
+      { label: 'Goal', text: 'Calibrate eye tracking for gaze modes.' },
     ],
-    note: 'Press Enter, click, or controller A / Start after tracking is ready to continue.',
+    expandedItems: [{ label: 'Best for', text: 'First-time gaze users.' }],
+    compactNote: 'A / Start / Enter starts calibration.',
+    expandedNote: 'Press R if tracking drifts during setup.',
   },
   gazePaddle: {
     title: 'Gaze Paddle',
-    items: [
-      {
-        label: 'Controls',
-        text: 'Look left/right to steer the paddle once tracking is active; controller buttons can acknowledge prompts.',
-      },
-      {
-        label: 'How to play',
-        text: 'Keep the glowing ball bouncing with smooth gaze shifts; misses register in the HUD.',
-      },
-      {
-        label: 'Settings',
-        text: 'Finish calibration first—ESC exits, R requests recalibration, and settings persist across sessions.',
-      },
-      {
-        label: 'Inputs',
-        text: 'The gameplay is gaze-driven; controllers only help confirm popups.',
-      },
+    compactItems: [
+      { label: 'Controls', text: 'Use gaze left/right to move the paddle.' },
+      { label: 'Goal', text: 'Keep the ball in play and score points.' },
     ],
-    note: 'Click the highlighted mode or press Enter / controller A / Start to open Gaze Paddle once calibration is ready.',
+    expandedItems: [{ label: 'Best for', text: 'Returning calibrated users.' }],
+    compactNote: 'Requires completed gaze calibration.',
+    expandedNote: 'ESC exits; recalibrate first if movement feels off.',
   },
   gazeRunner: {
     title: 'Gaze Lane Runner (Legacy)',
-    items: [
-      {
-        label: 'Controls',
-        text: 'Look toward lanes to switch and avoid robots while keeping your gaze steady.',
-      },
-      {
-        label: 'How to play',
-        text: 'Glance ahead to steer the runner down the lane and dodge obstacles; calm gaze = smoother flight.',
-      },
-      {
-        label: 'Settings',
-        text: 'Gaze calibration unlocks this legacy mode—ESC pauses, R recalibrates during setup.',
-      },
-      {
-        label: 'Inputs',
-        text: 'Eyes do the movement; controllers only handle menu confirmations.',
-      },
+    compactItems: [
+      { label: 'Controls', text: 'Shift gaze between lanes to steer.' },
+      { label: 'Goal', text: 'Avoid obstacles as speed increases.' },
     ],
-    note: 'Use Enter, click, or controller A / Start after highlighting this legacy mode.',
+    expandedItems: [{ label: 'Best for', text: 'Legacy gaze demo mode.' }],
+    compactNote: 'Requires completed gaze calibration.',
+    expandedNote: 'ESC pauses; keep head steady for smoother tracking.',
   },
 };
 
@@ -395,14 +331,24 @@ function updateStartMenuGuide(button = startMenuButtons[startMenuIndex]) {
   if (!startMenuGuideTitle || !startMenuGuideList || !startMenuGuideNote) return;
   const guideKey = button?.dataset?.game;
   const guide = START_MENU_GUIDES[guideKey] || START_MENU_GUIDES.default;
+  const compactItems = Array.isArray(guide.compactItems) ? guide.compactItems : [];
+  const expandedItems = Array.isArray(guide.expandedItems) ? guide.expandedItems : [];
+  const items = startMenuGuideExpanded ? compactItems.concat(expandedItems) : compactItems;
   startMenuGuideTitle.textContent = guide.title;
   startMenuGuideList.innerHTML = '';
-  guide.items.forEach((item) => {
+  items.forEach((item) => {
     const li = document.createElement('li');
     li.innerHTML = `<span class="guide-label">${item.label}</span> ${item.text}`;
     startMenuGuideList.appendChild(li);
   });
-  startMenuGuideNote.textContent = guide.note;
+  startMenuGuideNote.textContent = startMenuGuideExpanded
+    ? guide.expandedNote || ''
+    : guide.compactNote || '';
+}
+
+function toggleStartMenuGuideExpanded() {
+  startMenuGuideExpanded = !startMenuGuideExpanded;
+  updateStartMenuGuide();
 }
 
 if (!isDebugMode) {
@@ -562,6 +508,7 @@ let menuIndex = 0;
 let menuMode = 'main';
 let startMenuIndex = 0;
 let startMenuVisible = true;
+let startMenuGuideExpanded = false;
 const colorHelper = new THREE.Color();
 const aiDiff = new THREE.Vector2();
 const aiMoveTarget = new THREE.Vector2();
@@ -1232,6 +1179,9 @@ function handleStartMenuGamepadInput(padIndex) {
     moveStartMenuSelection(-1);
   } else if (state.navEvents.down) {
     moveStartMenuSelection(1);
+  }
+  if (wasGamepadButtonPressed(padIndex, GAMEPAD_BUTTONS.Y)) {
+    toggleStartMenuGuideExpanded();
   }
   if (
     wasGamepadButtonPressed(padIndex, GAMEPAD_BUTTONS.A) ||
@@ -2132,6 +2082,11 @@ function updateControlHints(mode) {
 
 function handleStartMenuKeydown(event) {
   const key = event.key.toLowerCase();
+  if (key === 'h' || key === 'y') {
+    toggleStartMenuGuideExpanded();
+    event.preventDefault();
+    return true;
+  }
   if (key === 'arrowup' || key === 'w') {
     moveStartMenuSelection(-1);
     event.preventDefault();
@@ -3892,6 +3847,7 @@ function showStartMenu() {
   startMenuVisible = true;
   startMenu.classList.remove('hidden');
   startMenuIndex = 0;
+  startMenuGuideExpanded = false;
   highlightStartButton();
   setScoreboardText('CHOOSE GAME', 'SELECT A MODE', '');
   showCenterMessage('CHOOSE GAME', 0);
