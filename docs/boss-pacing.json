@@ -1,0 +1,293 @@
+{
+  "notes": "Assisted, deterministic moving-boss aim probe. Player follows boss horizontally at fixed height. Refreshed shield prevents death; no specials. Power ranks 0/1/1/2 at waves 5/10/15/20. null = 180-second timeout. Real dodging/player skill are not modeled.",
+  "rows": [
+    {
+      "wave": 5,
+      "weaponId": "spread",
+      "playerY": 350,
+      "hp": 190,
+      "seconds": 24.86,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 5,
+      "weaponId": "spread",
+      "playerY": 610,
+      "hp": 190,
+      "seconds": 56.72,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 5,
+      "weaponId": "lance",
+      "playerY": 350,
+      "hp": 190,
+      "seconds": 20.28,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 5,
+      "weaponId": "lance",
+      "playerY": 610,
+      "hp": 190,
+      "seconds": 32.84,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 5,
+      "weaponId": "seeker",
+      "playerY": 350,
+      "hp": 190,
+      "seconds": 20.54,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 5,
+      "weaponId": "seeker",
+      "playerY": 610,
+      "hp": 190,
+      "seconds": 21.04,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 10,
+      "weaponId": "spread",
+      "playerY": 350,
+      "hp": 360,
+      "seconds": 39.68,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 10,
+      "weaponId": "spread",
+      "playerY": 610,
+      "hp": 360,
+      "seconds": 83.7,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 10,
+      "weaponId": "lance",
+      "playerY": 350,
+      "hp": 360,
+      "seconds": 33.58,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 10,
+      "weaponId": "lance",
+      "playerY": 610,
+      "hp": 360,
+      "seconds": 35.84,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 10,
+      "weaponId": "seeker",
+      "playerY": 350,
+      "hp": 360,
+      "seconds": 33.78,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 10,
+      "weaponId": "seeker",
+      "playerY": 610,
+      "hp": 360,
+      "seconds": 34.16,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 15,
+      "weaponId": "fan",
+      "playerY": 350,
+      "hp": 250,
+      "seconds": 33.18,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 15,
+      "weaponId": "fan",
+      "playerY": 610,
+      "hp": 250,
+      "seconds": 84.04,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 15,
+      "weaponId": "barrage",
+      "playerY": 350,
+      "hp": 250,
+      "seconds": 20.66,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 15,
+      "weaponId": "barrage",
+      "playerY": 610,
+      "hp": 250,
+      "seconds": 30.2,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 15,
+      "weaponId": "rail",
+      "playerY": 350,
+      "hp": 250,
+      "seconds": 18.16,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 15,
+      "weaponId": "rail",
+      "playerY": 610,
+      "hp": 250,
+      "seconds": 27.34,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 15,
+      "weaponId": "chain",
+      "playerY": 350,
+      "hp": 250,
+      "seconds": 18.76,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 15,
+      "weaponId": "chain",
+      "playerY": 610,
+      "hp": 250,
+      "seconds": 29.78,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 15,
+      "weaponId": "swarm",
+      "playerY": 350,
+      "hp": 250,
+      "seconds": 18.76,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 15,
+      "weaponId": "swarm",
+      "playerY": 610,
+      "hp": 250,
+      "seconds": 19.24,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 15,
+      "weaponId": "drones",
+      "playerY": 350,
+      "hp": 250,
+      "seconds": 21.7,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 15,
+      "weaponId": "drones",
+      "playerY": 610,
+      "hp": 250,
+      "seconds": 28.98,
+      "patternsSeen": 4
+    },
+    {
+      "wave": 20,
+      "weaponId": "fan",
+      "playerY": 350,
+      "hp": 500,
+      "seconds": 60.58,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 20,
+      "weaponId": "fan",
+      "playerY": 610,
+      "hp": 500,
+      "seconds": 153,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 20,
+      "weaponId": "barrage",
+      "playerY": 350,
+      "hp": 500,
+      "seconds": 34.76,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 20,
+      "weaponId": "barrage",
+      "playerY": 610,
+      "hp": 500,
+      "seconds": 44.66,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 20,
+      "weaponId": "rail",
+      "playerY": 350,
+      "hp": 500,
+      "seconds": 32.4,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 20,
+      "weaponId": "rail",
+      "playerY": 610,
+      "hp": 500,
+      "seconds": 32.94,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 20,
+      "weaponId": "chain",
+      "playerY": 350,
+      "hp": 500,
+      "seconds": 32.96,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 20,
+      "weaponId": "chain",
+      "playerY": 610,
+      "hp": 500,
+      "seconds": 34.36,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 20,
+      "weaponId": "swarm",
+      "playerY": 350,
+      "hp": 500,
+      "seconds": 32.96,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 20,
+      "weaponId": "swarm",
+      "playerY": 610,
+      "hp": 500,
+      "seconds": 33.42,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 20,
+      "weaponId": "drones",
+      "playerY": 350,
+      "hp": 500,
+      "seconds": 35.32,
+      "patternsSeen": 5
+    },
+    {
+      "wave": 20,
+      "weaponId": "drones",
+      "playerY": 610,
+      "hp": 500,
+      "seconds": 42.82,
+      "patternsSeen": 5
+    }
+  ]
+}

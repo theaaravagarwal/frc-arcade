@@ -1,0 +1,186 @@
+{
+  "seconds": 10,
+  "notes": "Stationary 10,000 HP targets; no perks. Includes projectile travel time. Different geometry should favor different builds.",
+  "rows": [
+    {
+      "weapon": "base",
+      "single": {
+        "damage": 50,
+        "targetsHit": 1,
+        "peakShots": 4
+      },
+      "wide": {
+        "damage": 49,
+        "targetsHit": 1,
+        "peakShots": 4
+      },
+      "column": {
+        "damage": 51,
+        "targetsHit": 1,
+        "peakShots": 3
+      }
+    },
+    {
+      "weapon": "spread",
+      "single": {
+        "damage": 30.4,
+        "targetsHit": 1,
+        "peakShots": 15
+      },
+      "wide": {
+        "damage": 89.6,
+        "targetsHit": 3,
+        "peakShots": 9
+      },
+      "column": {
+        "damage": 30.4,
+        "targetsHit": 1,
+        "peakShots": 14
+      }
+    },
+    {
+      "weapon": "lance",
+      "single": {
+        "damage": 93,
+        "targetsHit": 1,
+        "peakShots": 4
+      },
+      "wide": {
+        "damage": 90,
+        "targetsHit": 1,
+        "peakShots": 4
+      },
+      "column": {
+        "damage": 186,
+        "targetsHit": 2,
+        "peakShots": 2
+      }
+    },
+    {
+      "weapon": "seeker",
+      "single": {
+        "damage": 91,
+        "targetsHit": 1,
+        "peakShots": 3
+      },
+      "wide": {
+        "damage": 91,
+        "targetsHit": 1,
+        "peakShots": 3
+      },
+      "column": {
+        "damage": 93.6,
+        "targetsHit": 1,
+        "peakShots": 2
+      }
+    },
+    {
+      "weapon": "fan",
+      "single": {
+        "damage": 23.25,
+        "targetsHit": 1,
+        "peakShots": 22
+      },
+      "wide": {
+        "damage": 112.5,
+        "targetsHit": 5,
+        "peakShots": 15
+      },
+      "column": {
+        "damage": 23.25,
+        "targetsHit": 1,
+        "peakShots": 22
+      }
+    },
+    {
+      "weapon": "barrage",
+      "single": {
+        "damage": 113.75,
+        "targetsHit": 1,
+        "peakShots": 7
+      },
+      "wide": {
+        "damage": 37.5,
+        "targetsHit": 1,
+        "peakShots": 11
+      },
+      "column": {
+        "damage": 116.25,
+        "targetsHit": 1,
+        "peakShots": 6
+      }
+    },
+    {
+      "weapon": "rail",
+      "single": {
+        "damage": 120,
+        "targetsHit": 1,
+        "peakShots": 2
+      },
+      "wide": {
+        "damage": 120,
+        "targetsHit": 1,
+        "peakShots": 2
+      },
+      "column": {
+        "damage": 360,
+        "targetsHit": 3,
+        "peakShots": 2
+      }
+    },
+    {
+      "weapon": "chain",
+      "single": {
+        "damage": 116.25,
+        "targetsHit": 1,
+        "peakShots": 2
+      },
+      "wide": {
+        "damage": 213.75,
+        "targetsHit": 3,
+        "peakShots": 3
+      },
+      "column": {
+        "damage": 168.56,
+        "targetsHit": 2,
+        "peakShots": 2
+      }
+    },
+    {
+      "weapon": "swarm",
+      "single": {
+        "damage": 116.25,
+        "targetsHit": 1,
+        "peakShots": 6
+      },
+      "wide": {
+        "damage": 112.5,
+        "targetsHit": 1,
+        "peakShots": 9
+      },
+      "column": {
+        "damage": 116.25,
+        "targetsHit": 1,
+        "peakShots": 6
+      }
+    },
+    {
+      "weapon": "drones",
+      "single": {
+        "damage": 114,
+        "targetsHit": 1,
+        "peakShots": 6
+      },
+      "wide": {
+        "damage": 67.5,
+        "targetsHit": 1,
+        "peakShots": 10
+      },
+      "column": {
+        "damage": 69,
+        "targetsHit": 2,
+        "peakShots": 10
+      }
+    }
+  ]
+}

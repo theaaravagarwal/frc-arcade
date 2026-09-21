@@ -1,4 +1,4 @@
-const { app, BrowserWindow, dialog, ipcMain, powerSaveBlocker } = require('electron');
+const { app, BrowserWindow, ipcMain, powerSaveBlocker } = require('electron');
 
 let SerialPort = null;
 try {
@@ -8,9 +8,7 @@ try {
 }
 
 const isDev = process.env.NODE_ENV === 'development';
-const isUnsupportedPlatform = !isDev && process.platform !== 'linux';
 let sleepBlockerId = null;
-const LED_DEFAULT_PORT = '/dev/ttyUSB0';
 const LED_DEFAULT_BAUD = 1000000;
 const LED_COUNT = 300;
 const LED_DEFAULT_BRIGHTNESS_CAP = 1;
@@ -19,6 +17,55 @@ const PREAMBLE_1 = 0x55;
 const RSP_ERROR = 0x7f;
 const CMD_SET_STRIP_BULK = 0x34;
 const CMD_SET_STRIP_INTERP = 0x35;
+
+function getDefaultLedPort() {
+  return '/dev/ttyUSB0';
+}
+
+function shouldAutoDetectLedPort() {
+  return process.platform !== 'darwin';
+}
+
+function normalizeMacosSerialPath(path) {
+  if (typeof path !== 'string') return null;
+  if (!path.startsWith('/dev/tty.')) return path;
+  return `/dev/cu.${path.slice('/dev/tty.'.length)}`;
+}
+
+function getLikelyLedPortScore(path) {
+  const normalized = String(path || '').toLowerCase();
+  let score = 0;
+  if (normalized.includes('usbmodem')) score += 5;
+  if (normalized.includes('usbserial')) score += 5;
+  if (normalized.includes('wchusbserial')) score += 4;
+  if (normalized.includes('arduino')) score += 3;
+  if (normalized.includes('usb')) score += 2;
+  if (normalized.includes('debug')) score -= 8;
+  if (normalized.includes('bluetooth')) score -= 8;
+  return score;
+}
+
+async function detectLedPort() {
+  if (!SerialPort || typeof SerialPort.list !== 'function') {
+    return null;
+  }
+
+  const ports = await SerialPort.list();
+
+  if (process.platform === 'darwin') {
+    const bestPort = ports
+      .map((entry) => normalizeMacosSerialPath(entry.path))
+      .filter(Boolean)
+      .map((path) => ({ path, score: getLikelyLedPortScore(path) }))
+      .sort((a, b) => b.score - a.score)[0];
+
+    if (bestPort && bestPort.score > 0) {
+      return bestPort.path;
+    }
+  }
+
+  return null;
+}
 
 function xorChecksum(bytes) {
   let chk = 0;
@@ -89,7 +136,8 @@ function hsvToRgb(h, s, v) {
 class LedUartClient {
   constructor() {
     this.enabled = process.env.LED_ENABLED !== '0' && !!SerialPort;
-    this.portPath = process.env.LED_SERIAL_PORT || LED_DEFAULT_PORT;
+    this.portPath = process.env.LED_SERIAL_PORT || getDefaultLedPort();
+    this.hasResolvedPort = Boolean(process.env.LED_SERIAL_PORT) || !shouldAutoDetectLedPort();
     this.baudRate = Number(process.env.LED_BAUD || LED_DEFAULT_BAUD);
     this.brightnessCap = clamp01(
       process.env.LED_BRIGHTNESS_CAP != null
@@ -129,7 +177,7 @@ class LedUartClient {
 
   start() {
     if (!this.enabled) return;
-    this.connect();
+    void this.connect();
   }
 
   stop() {
@@ -179,9 +227,25 @@ class LedUartClient {
     }, 1200);
   }
 
-  connect() {
+  async connect() {
     if (!this.enabled || !SerialPort) return;
     if (this.port) return;
+    if (!process.env.LED_SERIAL_PORT && !this.hasResolvedPort && shouldAutoDetectLedPort()) {
+      try {
+        const detectedPort = await detectLedPort();
+        if (detectedPort) {
+          this.portPath = detectedPort;
+          this.hasResolvedPort = true;
+        }
+      } catch (error) {
+        console.warn('[LED]', 'Failed to enumerate serial ports:', error.message);
+      }
+    }
+    if (process.platform === 'darwin' && !process.env.LED_SERIAL_PORT) {
+      console.warn('[LED]', 'LED UART disabled on macOS unless LED_SERIAL_PORT is set explicitly.');
+      this.enabled = false;
+      return;
+    }
     const port = new SerialPort({
       path: this.portPath,
       baudRate: this.baudRate,
@@ -215,6 +279,7 @@ class LedUartClient {
       }
       console.log('[LED]', `Connected ${this.portPath}@${this.baudRate}`);
       this.connected = true;
+      this.hasResolvedPort = true;
       this.sendCommand(CMD_SET_STRIP_INTERP, Buffer.from([0x00, 0x00])).catch(() => {});
       this.applyAmbientMode();
     });
@@ -744,14 +809,6 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
-  if (isUnsupportedPlatform) {
-    dialog.showErrorBox(
-      'Unsupported Platform',
-      'This production build is intended for Linux environments only.'
-    );
-    app.quit();
-    return;
-  }
   sleepBlockerId = powerSaveBlocker.start('prevent-display-sleep');
   ledUartClient.start();
   createWindow();

@@ -1,0 +1,158 @@
+[
+  {
+    "label": "wave-3-miniboss",
+    "frames": 722,
+    "excludedNonPlayingFrames": 0,
+    "frameGapMs": {
+      "p50": 16.69999998807907,
+      "p95": 18.600000008940697,
+      "max": 19
+    },
+    "hostTickMs": {
+      "p50": 1.2999999970197678,
+      "p95": 1.7000000029802322,
+      "max": 8.5
+    },
+    "peaks": {
+      "warnings": 1,
+      "bullets": 22,
+      "shots": 7,
+      "hitParticles": 1,
+      "trails": 0
+    },
+    "worstTick": {
+      "durationMs": 8.5,
+      "gapBeforeMs": 15.599999994039536,
+      "wave": 3,
+      "bossPhase": 1,
+      "warnings": 1,
+      "bullets": 0,
+      "enemies": 1,
+      "shots": 7,
+      "effects": {
+        "hitParticles": 0,
+        "pickups": 0,
+        "shields": 0,
+        "trails": 0
+      },
+      "substate": "play"
+    }
+  },
+  {
+    "label": "wave-10-majorboss",
+    "frames": 721,
+    "excludedNonPlayingFrames": 0,
+    "frameGapMs": {
+      "p50": 16.700000002980232,
+      "p95": 18.599999994039536,
+      "max": 18.899999991059303
+    },
+    "hostTickMs": {
+      "p50": 1,
+      "p95": 1.4000000059604645,
+      "max": 5.200000002980232
+    },
+    "peaks": {
+      "warnings": 1,
+      "bullets": 32,
+      "shots": 7,
+      "hitParticles": 1,
+      "trails": 0
+    },
+    "worstTick": {
+      "durationMs": 5.200000002980232,
+      "gapBeforeMs": 16.400000005960464,
+      "wave": 10,
+      "bossPhase": 1,
+      "warnings": 1,
+      "bullets": 0,
+      "enemies": 1,
+      "shots": 7,
+      "effects": {
+        "hitParticles": 0,
+        "pickups": 0,
+        "shields": 0,
+        "trails": 0
+      },
+      "substate": "play"
+    }
+  },
+  {
+    "label": "wave-25",
+    "frames": 721,
+    "excludedNonPlayingFrames": 0,
+    "frameGapMs": {
+      "p50": 16.69999998807907,
+      "p95": 18.599999994039536,
+      "max": 18.799999997019768
+    },
+    "hostTickMs": {
+      "p50": 1.1000000089406967,
+      "p95": 1.5,
+      "max": 2.7999999970197678
+    },
+    "peaks": {
+      "warnings": 3,
+      "bullets": 30,
+      "shots": 8,
+      "hitParticles": 1,
+      "trails": 0
+    },
+    "worstTick": {
+      "durationMs": 2.7999999970197678,
+      "gapBeforeMs": 17.400000005960464,
+      "wave": 25,
+      "bossPhase": 0,
+      "warnings": 1,
+      "bullets": 0,
+      "enemies": 23,
+      "shots": 4,
+      "effects": {
+        "hitParticles": 1,
+        "pickups": 0,
+        "shields": 0,
+        "trails": 0
+      },
+      "substate": "play"
+    }
+  },
+  {
+    "label": "wave-41",
+    "frames": 721,
+    "excludedNonPlayingFrames": 0,
+    "frameGapMs": {
+      "p50": 16.700000002980232,
+      "p95": 18.599999994039536,
+      "max": 18.899999991059303
+    },
+    "hostTickMs": {
+      "p50": 1.2000000029802322,
+      "p95": 1.5999999940395355,
+      "max": 1.9000000059604645
+    },
+    "peaks": {
+      "warnings": 3,
+      "bullets": 25,
+      "shots": 7,
+      "hitParticles": 0,
+      "trails": 0
+    },
+    "worstTick": {
+      "durationMs": 1.9000000059604645,
+      "gapBeforeMs": 16.799999997019768,
+      "wave": 41,
+      "bossPhase": 0,
+      "warnings": 1,
+      "bullets": 0,
+      "enemies": 96,
+      "shots": 4,
+      "effects": {
+        "hitParticles": 0,
+        "pickups": 0,
+        "shields": 0,
+        "trails": 0
+      },
+      "substate": "play"
+    }
+  }
+]

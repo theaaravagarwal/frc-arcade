@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "codex-grid-background",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-09-14T00:38:10.748Z",
+        "reason": "Agent: retained incumbent blueprint grid behind weapon diagrams on the build-decision screen; new sandbox and name-entry surfaces do not use it."
+      }
+    ]
+  }
+}
